@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>День учителя: Мем-шоу</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Nunito:wght@500;700;800&display=swap">
+<style>
+:root{
+  --bg:#FFF6DC; --ink:#1C1F3A; --muted:#575B7A; --card:#FFFFFF;
+  --yellow:#FFC933; --coral:#FF5A5F; --mint:#1FBF8A; --blue:#3B5BFF;
+  --line:#1C1F3A;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#15172E; --ink:#FFF6DC; --muted:#B9BCD8; --card:#22254A; --line:#FFF6DC;
+  }
+}
+:root[data-theme="dark"]{ --bg:#15172E; --ink:#FFF6DC; --muted:#B9BCD8; --card:#22254A; --line:#FFF6DC; }
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;height:100%;background:var(--bg);color:var(--ink);
+  font-family:"Nunito",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-weight:700;overflow:hidden}
+h1,h2,h3{font-family:"Unbounded","Arial Black",Impact,sans-serif;margin:0;line-height:1.1;font-weight:800}
+#deck{height:100%;position:relative}
+.slide{position:absolute;inset:0;display:none;flex-direction:column;justify-content:center;
+  padding:clamp(20px,4vw,64px) clamp(20px,6vw,96px) 84px;overflow-y:auto}
+.slide.active{display:flex}
+.slide>.wrap{width:100%;max-width:1100px;margin:0 auto}
+h1{font-size:clamp(34px,7vw,88px);letter-spacing:-.02em}
+h2{font-size:clamp(26px,4.6vw,56px);letter-spacing:-.01em}
+h3{font-size:clamp(18px,2.4vw,28px)}
+p,li{font-size:clamp(17px,2.2vw,26px);line-height:1.4}
+.sub{color:var(--muted);font-size:clamp(17px,2.4vw,28px);margin-top:18px}
+.badge{display:inline-block;background:var(--ink);color:var(--bg);border-radius:999px;
+  padding:6px 16px;font-size:clamp(14px,1.6vw,18px);margin-bottom:18px}
+.big-emoji{font-size:clamp(70px,16vw,220px);line-height:1;margin:20px 0}
+.sticker{display:inline-block;transform:rotate(-3deg);background:var(--yellow);color:#1C1F3A;
+  border:3px solid #1C1F3A;box-shadow:6px 6px 0 #1C1F3A;padding:10px 22px;border-radius:14px}
+.row{display:flex;gap:clamp(16px,3vw,48px);align-items:center;flex-wrap:wrap}
+.row>*{flex:1 1 320px}
+ul.todo{list-style:none;padding:0;margin:18px 0 0}
+ul.todo li{padding:12px 18px;margin-bottom:10px;background:var(--card);border:3px solid var(--line);
+  border-radius:14px;display:flex;gap:14px;align-items:flex-start}
+ul.todo li span.i{font-size:1.3em;line-height:1}
+.card{background:var(--card);border:3px solid var(--line);border-radius:18px;padding:20px 24px}
+.scale{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.scale b{min-width:44px;height:44px;border-radius:50%;display:grid;place-items:center;
+  border:3px solid var(--line);background:var(--card);font-size:18px}
+.scale b:nth-child(n+8){background:var(--mint);color:#1C1F3A}
+.scale b:nth-child(-n+3){background:var(--coral);color:#1C1F3A}
+button{font:inherit;font-weight:800;cursor:pointer;color:#1C1F3A;background:var(--yellow);
+  border:3px solid #1C1F3A;border-radius:14px;padding:10px 22px;box-shadow:4px 4px 0 #1C1F3A;
+  transition:transform .12s, box-shadow .12s}
+button:hover{transform:translate(-1px,-1px);box-shadow:6px 6px 0 #1C1F3A}
+button:active{transform:translate(3px,3px);box-shadow:1px 1px 0 #1C1F3A}
+button:focus-visible,input:focus-visible{outline:4px solid var(--blue);outline-offset:3px}
+.timer{font-family:"Unbounded",sans-serif;font-size:clamp(40px,7vw,84px);font-weight:800;
+  min-width:3ch;text-align:center}
+.timer.end{color:var(--coral)}
+.bg-yellow{background:var(--yellow);color:#1C1F3A}
+.bg-yellow .sub,.bg-yellow p{color:#1C1F3A}
+.bg-yellow .badge{background:#1C1F3A;color:#FFF6DC}
+.emoji-q{font-size:clamp(54px,12vw,150px);letter-spacing:.08em;line-height:1.1;text-align:center;
+  background:var(--card);border:3px solid var(--line);border-radius:24px;padding:18px 10px;margin:18px 0}
+.answer{font-family:"Unbounded",sans-serif;font-size:clamp(24px,5vw,60px);text-align:center;
+  color:var(--ink);min-height:1.3em}
+.answer.hidden{visibility:hidden}
+/* scoreboard */
+.tablewrap{overflow-x:auto;margin-top:18px}
+table{border-collapse:separate;border-spacing:0;width:100%;min-width:640px;background:var(--card);
+  border:3px solid var(--line);border-radius:16px;overflow:hidden}
+th,td{padding:10px 8px;text-align:center;border-bottom:2px solid var(--line);font-size:clamp(14px,1.6vw,20px)}
+tr:last-child td{border-bottom:0}
+th{background:var(--ink);color:var(--bg);font-weight:800}
+td input{width:100%;min-width:52px;font:inherit;font-weight:800;text-align:center;color:var(--ink);
+  background:transparent;border:2px dashed var(--muted);border-radius:8px;padding:6px}
+td.name input{text-align:left;min-width:150px}
+td.total{font-family:"Unbounded",sans-serif;background:var(--yellow);color:#1C1F3A}
+tr.leader td.total{background:var(--mint)}
+/* nav */
+#bar{position:fixed;left:0;right:0;bottom:0;z-index:5;display:flex;align-items:center;gap:12px;
+  justify-content:space-between;padding:10px clamp(12px,3vw,32px) calc(10px + env(safe-area-inset-bottom,0px));
+  background:var(--bg);border-top:3px solid var(--line)}
+#prog{flex:1;height:10px;border-radius:99px;background:var(--card);border:2px solid var(--line);overflow:hidden}
+#prog i{display:block;height:100%;width:0;background:var(--coral);transition:width .25s}
+#count{font-size:16px;min-width:5ch;text-align:right}
+@keyframes wob{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+.wob{display:inline-block;animation:wob 1.2s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.wob{animation:none}button{transition:none}}
+.shponk_nice{height:385px;width:485px;max-width:100%;object-fit:contain}
+.pokoyo{height:385px;width:485px;max-width:100%;object-fit:contain}
+.tetka{height:385px;width:500px;max-width:100%;object-fit:contain}
+
+/* ================= ЭТАП 3: ПЕСНИ ================= */
+.songcard{
+  position:relative;
+  margin-top:22px;
+  background:var(--card);
+  border:3px solid var(--line);
+  border-radius:26px;
+  padding:clamp(16px,2.8vw,34px);
+  display:flex;align-items:center;gap:clamp(16px,3vw,38px);flex-wrap:wrap;
+  box-shadow:8px 8px 0 var(--line);
+  overflow:hidden;
+}
+.songcard::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(circle at 92% -25%, rgba(255,201,51,.55), transparent 55%);
+}
+.songcard::after{
+  content:"";position:absolute;right:-40px;bottom:-60px;width:180px;height:180px;border-radius:50%;
+  border:3px dashed var(--line);opacity:.18;pointer-events:none;
+}
+/* винил */
+.vinyl{
+  position:relative;flex:0 0 auto;z-index:1;
+  width:clamp(96px,14vw,158px);height:clamp(96px,14vw,158px);
+  border-radius:50%;border:3px solid var(--line);
+  background:repeating-radial-gradient(circle at 50% 50%,
+      #2b2f57 0 3px, #1c1f3a 3px 6px);
+  display:grid;place-items:center;
+  box-shadow:inset 0 0 0 7px rgba(255,255,255,.06), 5px 5px 0 var(--line);
+  animation:spin 4.5s linear infinite;
+  animation-play-state:paused;
+}
+.songcard.playing .vinyl{animation-play-state:running}
+.vinyl::after{
+  content:"🎵";position:absolute;inset:31%;border-radius:50%;
+  background:var(--yellow);border:3px solid var(--line);
+  display:grid;place-items:center;
+  font-size:clamp(18px,2.6vw,30px);line-height:1;
+  animation:spin 4.5s linear infinite reverse;
+  animation-play-state:inherit;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){
+  .vinyl,.vinyl::after{animation:none}
+}
+/* текстовая часть */
+.song-meta{position:relative;z-index:1;flex:1 1 320px;min-width:260px}
+.song-meta h3{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:6px;background:var(--coral);color:#FFF6DC;
+  border:3px solid var(--line);border-radius:999px;padding:2px 14px;
+  font-family:"Nunito",sans-serif;font-size:clamp(13px,1.5vw,17px);
+  box-shadow:3px 3px 0 var(--line);transform:rotate(-2deg)}
+.song-meta p{color:var(--muted);font-size:clamp(15px,1.9vw,20px);margin:10px 0 16px;line-height:1.35}
+audio.audio{
+  display:block;width:100%;height:56px;
+  border:3px solid var(--line);border-radius:16px;background:var(--yellow);
+  box-shadow:5px 5px 0 var(--line);
+}
+audio.audio::-webkit-media-controls-enclosure{border-radius:12px;background:var(--yellow)}
+audio.audio::-webkit-media-controls-panel{background:var(--yellow)}
+/* ответ */
+.revealwrap{text-align:center;margin-top:20px}
+.song-answer{
+  margin-top:18px;padding:14px 20px;
+  background:var(--card);border:3px solid var(--line);border-radius:20px;
+  box-shadow:6px 6px 0 var(--line);
+}
+/* «ноты-подсказки» */
+.notes{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.notes b{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;
+  border:3px solid var(--line);background:var(--card);font-size:16px}
+@media (max-width:560px){
+  .shponk_nice,.pokoyo,.tetka{height:auto;width:100%;max-height:300px}
+  .vinyl{width:110px;height:110px}
+}
+</style>
+</head>
+<body>
+<div id="deck">
+
+<!-- 1. Title -->
+<section class="slide bg-yellow active" data-title="Начало">
+  <div class="wrap">
+    <span class="badge">5 октября · День учителя</span>
+    <h1>Мем-шоу: <br>повтори, если сможешь</h1>
+    <div class="big-emoji"><span class="wob">🎭</span> 😎 🐱</div>
+  </div>
+</section>
+
+<!-- 2. Rules -->
+<section class="slide" data-title="Правила">
+  <div class="wrap">
+    <h2>Как всё устроено</h2>
+    <ul class="todo">
+      <li><span class="i">🖼️</span><span><b>Этап 1. Оживи мем.</b> На экране мем — учитель повторяет позу, мимику и движения. Время на показ: 30 секунд.</span></li>
+      <li><span class="i">🤔</span><span><b>Этап 2. Угадай по смайликам.</b> Фильм зашифрован эмодзи — учителя угадывают.</span></li>
+      <li><span class="i">🎵</span><span><b>Этап 3. Угадай песню.</b> 5 секунд мелодии — назови песню и допой её.</span></li>
+      <li><span class="i">⭐</span><span><b>Оценки.</b> Жюри поднимает карточки от 1 до 5. Ведущий записывает среднюю оценку в таблицу.</span></li>
+      <li><span class="i">🏆</span><span><b>Финал.</b> Побеждает тот, у кого больше баллов. Приз — всеобщие аплодисменты.</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- 3. Scoring -->
+<section class="slide" data-title="Оценивание">
+  <div class="wrap">
+    <h2>Что оцениваем</h2>
+    <div class="row" style="margin-top:20px">
+      <div class="card"><h3>🎯 Похожесть</h3><p>Насколько точно повторили позу и мимику.</p></div>
+      <div class="card"><h3>🎬 Артистизм</h3><p>Энергия, эмоции, вовлечение зала.</p></div>
+      <div class="card"><h3>😂 Смех в зале</h3><p>Главный критерий. Смеются — значит получилось.</p></div>
+    </div>
+    <p class="sub">Общая оценка выступления — одна цифра от 1 до 5:</p>
+    <div class="scale" aria-label="Шкала оценок"><b>1</b><b>2</b><b>3</b><b>4</b><b>5</b></div>
+  </div>
+</section>
+
+<!-- 4. Stage 1 intro -->
+<section class="slide bg-yellow" data-title="Этап 1">
+  <div class="wrap" style="text-align:center">
+    <span class="badge">Этап 1</span>
+    <h1>Оживи мем</h1>
+    <p class="sub">Три мема. Три выхода. Одна попытка.</p>
+    <div class="big-emoji">👍 🧘 🙀</div>
+  </div>
+</section>
+
+<!-- 5. Meme 1 Nice -->
+<section class="slide" data-title="Мем: Найс" data-timer="30">
+  <div class="wrap">
+    <span class="badge">Мем 1</span>
+    <div class="row">
+      <div style="text-align:center">
+        <img src="./src/shponk_nice.gif" class="shponk_nice" alt="Мем «Найс»">
+        <span class="sticker"><h2>Найс.</h2></span>
+      </div>
+      <div>
+        <h3>Что показать</h3>
+        <ul class="todo">
+          <li><span class="i">👍</span><span>Большой палец вверх, взгляд спокойный и уверенный.</span></li>
+          <li><span class="i">😏</span><span>Прищур, лёгкая ухмылка, медленный одобрительный кивок.</span></li>
+          <li><span class="i">🎤</span><span>Произнести «Найс» так, чтобы зал поверил.</span></li>
+        </ul>
+        <div class="row" style="margin-top:14px;flex-wrap:nowrap;gap:16px"><div class="timer" data-t>0:30</div><button data-start>Старт</button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. Meme 2 Calm -->
+<section class="slide" data-title="Мем: Покойе" data-timer="30">
+  <div class="wrap">
+    <span class="badge">Мем 2</span>
+    <div class="row">
+      <div style="text-align:center">
+        <img src="./src/9715892554480.gif" class="pokoyo" alt="Мем «Покойе»">
+        <span class="sticker"><h2>Покойе.</h2></span>
+      </div>
+      <div>
+        <h3>Что показать</h3>
+        <ul class="todo">
+          <li><span class="i">😌</span><span>Полное дзен-спокойствие, зал «горит» — учитель не шелохнётся.</span></li>
+          <li><span class="i">🤫</span><span>Один медленный вдох. Одна фраза: «Спокойствие. Только спокойствие».</span></li>
+        </ul>
+        <div class="row" style="margin-top:14px;flex-wrap:nowrap;gap:16px"><div class="timer" data-t>0:30</div><button data-start>Старт</button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7. Meme 3 Woman yelling at cat -->
+<section class="slide" data-title="Мем: Тётка и кот" data-timer="45">
+  <div class="wrap">
+    <span class="badge">Мем 3</span>
+    <div class="row">
+      <div style="text-align:center">
+        <img src="./src/tetka.png" class="tetka" alt="Мем «Орущая тётка»">
+        <span class="sticker"><h2>Орущая тётка</h2></span>
+      </div>
+      <div>
+        <h3>Что показать</h3>
+        <ul class="todo">
+          <li><span class="i">😡</span><span><b>Учитель:</b> показывает пальцем, кричит, глаза горят.</span></li>
+          <li><span class="i">😐</span><span><b>Второй учитель («кот»):</b> невозмутимое лицо, полное спокойствие.</span></li>
+          <li><span class="i">🔄</span><span>Поменяться ролями за последние 10 секунд.</span></li>
+        </ul>
+        <div class="row" style="margin-top:14px;flex-wrap:nowrap;gap:16px"><div class="timer" data-t>0:45</div><button data-start>Старт</button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 8. Stage 2 intro -->
+<section class="slide bg-yellow" data-title="Этап 2">
+  <div class="wrap" style="text-align:center">
+    <span class="badge">Этап 2</span>
+    <h1>Угадай фильм по смайликам</h1>
+    <p class="sub">Командный раунд: можно советоваться шёпотом. Первый правильный ответ получает балл.</p>
+    <div class="big-emoji">🎬 🤔 🍿</div>
+  </div>
+</section>
+
+<!-- 9. Titanic -->
+<section class="slide" data-title="Фильм 1" data-reveal>
+  <div class="wrap">
+    <span class="badge">Фильм 1</span>
+    <h2>Что это за фильм?</h2>
+    <div class="emoji-q" role="img" aria-label="Корабль, айсберг, влюблённая пара, скрипка">🚢 🧊 💑 🎻</div>
+    <div class="answer hidden" data-answer>Титаник</div>
+    <div class="revealwrap"><button data-reveal-btn data-show-label="Показать ответ" data-hide-label="Скрыть ответ">Показать ответ</button></div>
+  </div>
+</section>
+
+<!-- 10. Diamond Arm -->
+<section class="slide" data-title="Фильм 2" data-reveal>
+  <div class="wrap">
+    <span class="badge">Фильм 2</span>
+    <h2>А этот?</h2>
+    <div class="emoji-q" role="img" aria-label="Бриллиант, рука в гипсе, остров, лодка">💎 💪 🌴 🚤</div>
+    <div class="answer hidden" data-answer>Бриллиантовая рука</div>
+    <div class="revealwrap"><button data-reveal-btn data-show-label="Показать ответ" data-hide-label="Скрыть ответ">Показать ответ</button></div>
+  </div>
+</section>
+
+<!-- 11. Harry Potter -->
+<section class="slide" data-title="Фильм 3" data-reveal>
+  <div class="wrap">
+    <span class="badge">Фильм 3</span>
+    <h2>А этот?</h2>
+    <div class="emoji-q" role="img" aria-label="Волшебник, молния, сова, поезд">🧙‍♂️ ⚡ 🦉 🚂</div>
+    <div class="answer hidden" data-answer>Гарри Поттер</div>
+    <div class="revealwrap"><button data-reveal-btn data-show-label="Показать ответ" data-hide-label="Скрыть ответ">Показать ответ</button></div>
+  </div>
+</section>
+
+<!-- 12. Stage 3 intro -->
+<section class="slide bg-yellow" data-title="Этап 3">
+  <div class="wrap" style="text-align:center">
+    <span class="badge">Этап 3</span>
+    <h1>Угадай песню по мелодии</h1>
+    <p class="sub">5 секунд мелодии — назови песню и допой её до конца.</p>
+    <div class="big-emoji">🎵 🎧 🎤</div>
+  </div>
+</section>
+
+<!-- 13. Песня 1 -->
+<section class="slide" data-title="Песня 1" data-reveal>
+  <div class="wrap">
+    <span class="badge">Песня 1</span>
+    <h2>Что за песня?</h2>
+    <div class="songcard">
+      <div class="vinyl" aria-hidden="true"></div>
+      <div class="song-meta">
+        <h3>Слушаем мелодию <span class="pill">⏱ 5 секунд</span></h3>
+        <p>Включите отрывок, дайте залу 5 секунд — и ждите правильный ответ. Потом допеть вместе!</p>
+        <audio class="audio" controls preload="none"
+               src="./src/Tatyana_Kurtukova_-_Matushka-zemlya_minus_77475194.mp3"></audio>
+      </div>
+    </div>
+    <div class="answer hidden song-answer" data-answer>Матушка-земля</div>
+    <div class="revealwrap"><button data-reveal-btn data-show-label="Показать название" data-hide-label="Скрыть название">Показать название</button></div>
+  </div>
+</section>
+
+<!-- 14. Песня 2 -->
+<!-- ⚠️ Замените src на свой файл (например ./src/song2.mp3) -->
+<section class="slide" data-title="Песня 2" data-reveal>
+  <div class="wrap">
+    <span class="badge">Песня 2</span>
+    <h2>А эта?</h2>
+    <div class="songcard">
+      <div class="vinyl" aria-hidden="true"></div>
+      <div class="song-meta">
+        <h3>Слушаем мелодию <span class="pill">⏱ 5 секунд</span></h3>
+        <p>Включите отрывок, дайте залу 5 секунд — и ждите правильный ответ.</p>
+        <audio class="audio" controls preload="none" src="./src/song2.mp3"></audio>
+      </div>
+    </div>
+    <div class="answer hidden song-answer" data-answer>Название песни 2</div>
+    <div class="revealwrap"><button data-reveal-btn data-show-label="Показать название" data-hide-label="Скрыть название">Показать название</button></div>
+  </div>
+</section>
+
+<!-- 15. Песня 3 -->
+<!-- ⚠️ Замените src на свой файл (например ./src/song3.mp3) -->
+<section class="slide" data-title="Песня 3" data-reveal>
+  <div class="wrap">
+    <span class="badge">Песня 3</span>
+    <h2>И финальная?</h2>
+    <div class="songcard">
+      <div class="vinyl" aria-hidden="true"></div>
+      <div class="song-meta">
+        <h3>Слушаем мелодию <span class="pill">⏱ 5 секунд</span></h3>
+        <p>Включите отрывок, дайте залу 5 секунд — и ждите правильный ответ.</p>
+        <audio class="audio" controls preload="none" src="./src/song3.mp3"></audio>
+      </div>
+    </div>
+    <div class="answer hidden song-answer" data-answer>Название песни 3</div>
+    <div class="revealwrap"><button data-reveal-btn data-show-label="Показать название" data-hide-label="Скрыть название">Показать название</button></div>
+  </div>
+</section>
+
+<!-- 16. Scoreboard (раскомментируйте, если нужна таблица) -->
+<!--
+<section class="slide" data-title="Таблица баллов">
+  <div class="wrap">
+    <h2>Таблица баллов 🏆</h2>
+    <p class="sub" style="margin-top:8px">Впишите имена и оценки зала. Итог считается сам.</p>
+    <div class="tablewrap">
+      <table id="board">
+        <thead><tr>
+          <th>Учитель</th><th>Найс</th><th>Покой</th><th>Тётка и кот</th><th>Фильмы</th><th>Песни</th><th>Итого</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div style="margin-top:16px"><button id="addRow">+ Добавить участника</button></div>
+  </div>
+</section>
+-->
+
+<!-- 17. Finale -->
+<section class="slide bg-yellow" data-title="Финал">
+  <div class="wrap" style="text-align:center">
+    <h1>Спасибо, <br>наши звёзды!</h1>
+    <p class="sub">С Днём учителя! Вы лучшие, и без мемов тоже.</p>
+    <div class="big-emoji"><span class="wob">🎉</span> 👏 💐</div>
+  </div>
+</section>
+
+</div>
+
+<div id="bar">
+  <button id="prev" aria-label="Назад">←</button>
+  <div id="prog"><i></i></div>
+  <span id="count">1 / 1</span>
+  <button id="next" aria-label="Вперёд">→</button>
+</div>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var cur = 0, tick = null;
+  var prog = document.querySelector('#prog i'), count = document.getElementById('count');
+
+  function fmt(s){ return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); }
+  function stopTimer(){ if(tick){ clearInterval(tick); tick=null; } }
+
+  function resetTimer(sl){
+    var t = sl.querySelector('[data-t]'); if(!t) return;
+    t.textContent = fmt(parseInt(sl.dataset.timer,10)); t.classList.remove('end');
+    var b = sl.querySelector('[data-start]'); if(b) b.textContent = 'Старт';
+  }
+
+  function show(i){
+    i = Math.max(0, Math.min(slides.length-1, i));
+    stopTimer();
+    slides[cur].classList.remove('active');
+    cur = i;
+    var sl = slides[cur];
+    sl.classList.add('active'); sl.scrollTop = 0;
+    resetTimer(sl);
+    // пауза всех аудио при уходе со слайда
+    slides.forEach(function(s){
+      if(s !== sl){ s.querySelectorAll('audio').forEach(function(a){ try{ a.pause(); }catch(e){} }); }
+    });
+    var denom = slides.length > 1 ? slides.length - 1 : 1;
+    prog.style.width = (cur/denom*100)+'%';
+    count.textContent = (cur+1)+' / '+slides.length;
+    try{ history.replaceState(null,'','#'+(cur+1)); }catch(e){}
+  }
+
+  slides.forEach(function(sl){
+    /* ---- таймер ---- */
+    var start = sl.querySelector('[data-start]');
+    if(start){
+      start.addEventListener('click', function(){
+        if(tick){ stopTimer(); start.textContent='Старт'; return; }
+        var t = sl.querySelector('[data-t]');
+        var left = (function(){ var p=t.textContent.split(':'); return parseInt(p[0],10)*60+parseInt(p[1],10); })();
+        if(left<=0){ resetTimer(sl); left=parseInt(sl.dataset.timer,10); }
+        start.textContent='Пауза';
+        tick = setInterval(function(){
+          left--; t.textContent = fmt(left);
+          if(left<=5) t.classList.add('end');
+          if(left<=0){ stopTimer(); start.textContent='Заново'; t.textContent='⏰'; }
+        },1000);
+      });
+    }
+
+    /* ---- показать ответ ---- */
+    var rb = sl.querySelector('[data-reveal-btn]');
+    if(rb){
+      var showTxt = rb.dataset.showLabel || 'Показать ответ';
+      var hideTxt = rb.dataset.hideLabel || 'Скрыть ответ';
+      rb.textContent = showTxt;
+      rb.addEventListener('click', function(){
+        var a = sl.querySelector('[data-answer]');
+        if(!a) return;
+        var hidden = a.classList.toggle('hidden');
+        rb.textContent = hidden ? showTxt : hideTxt;
+      });
+    }
+
+    /* ---- винил крутится только во время проигрывания ---- */
+    var card = sl.querySelector('.songcard');
+    if(card){
+      sl.querySelectorAll('audio').forEach(function(au){
+        au.addEventListener('play',  function(){ card.classList.add('playing'); });
+        au.addEventListener('pause', function(){ card.classList.remove('playing'); });
+        au.addEventListener('ended', function(){ card.classList.remove('playing'); });
+      });
+    }
+  });
+
+  document.getElementById('next').addEventListener('click', function(){ show(cur+1); });
+  document.getElementById('prev').addEventListener('click', function(){ show(cur-1); });
+
+  document.addEventListener('keydown', function(e){
+    var tag = (e.target && e.target.tagName) || '';
+    if(tag==='INPUT' || tag==='AUDIO') return;
+    if(e.key==='ArrowRight'||e.key==='PageDown'){ show(cur+1); }
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){ show(cur-1); }
+    else if(e.key==='Home'){ show(0); }
+    else if(e.key==='End'){ show(slides.length-1); }
+  });
+
+  /* swipe */
+  var sx=null;
+  document.addEventListener('touchstart', function(e){ sx=e.touches[0].clientX; }, {passive:true});
+  document.addEventListener('touchend', function(e){
+    if(sx===null) return;
+    var dx = e.changedTouches[0].clientX - sx; sx=null;
+    var tag = (e.target||{}).tagName||'';
+    if(Math.abs(dx)>70 && tag!=='INPUT' && tag!=='AUDIO') show(cur + (dx<0?1:-1));
+  }, {passive:true});
+
+  /* ---------- Таблица баллов (работает, только если секция раскомментирована) ---------- */
+  var board = document.getElementById('board');
+  if(board){
+    var tbody = board.querySelector('tbody');
+    var recalc = function(){
+      var best = -1, rows = [].slice.call(tbody.rows);
+      rows.forEach(function(r){
+        var sum = 0;
+        [].slice.call(r.querySelectorAll('input[type=number]')).forEach(function(i){ sum += parseFloat(i.value)||0; });
+        var tot = Math.round(sum*10)/10;
+        r.querySelector('.total').textContent = tot;
+        if(tot>best) best = tot;
+        r._tot = tot;
+      });
+      rows.forEach(function(r){ r.classList.toggle('leader', best>0 && r._tot===best); });
+    };
+    var addRow = function(){
+      var cols = board.querySelectorAll('thead th').length - 2; // минус «Учитель» и «Итого»
+      var tr = document.createElement('tr');
+      var h = '<td class="name"><input type="text" placeholder="Имя учителя" aria-label="Имя"></td>';
+      for(var k=0;k<cols;k++) h += '<td><input type="number" min="0" max="20" step="0.1" aria-label="Баллы"></td>';
+      h += '<td class="total">0</td>';
+      tr.innerHTML = h;
+      tr.addEventListener('input', recalc);
+      tbody.appendChild(tr);
+    };
+    for(var n=0;n<4;n++) addRow();
+    var addBtn = document.getElementById('addRow');
+    if(addBtn) addBtn.addEventListener('click', function(){ addRow(); });
+  }
+
+  var startIdx = parseInt((location.hash||'').replace('#',''),10);
+  show(isNaN(startIdx) ? 0 : startIdx-1);
+})();
+</script>
+</body>
+</html>

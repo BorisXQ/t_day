@@ -1,0 +1,32 @@
+{
+  "name": "День учителя: Мем-шоу",
+  "short_name": "Мем-шоу",
+  "description": "Интерактивное мем-шоу ко Дню учителя: оживи мем, угадай фильм и песню.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#FFF6DC",
+  "theme_color": "#FFC933",
+  "lang": "ru",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
